@@ -16,7 +16,7 @@ impl BitPushNumber {
     }
 }
 
-pub fn main(input: String) {
+pub fn main(input: String) -> (u64, u64) {
     let line_length = input.lines().next().unwrap().len();
 
     let mut zeroes = vec![0u32; line_length];
@@ -49,10 +49,22 @@ pub fn main(input: String) {
         epsilon_rate.push(common ^ 1);
     }
 
+    let result = ((gamma_rate.get() * epsilon_rate.get()) as u64, 0);
+
     println!(
         "g={} * e={} = {}",
         gamma_rate.get(),
         epsilon_rate.get(),
-        gamma_rate.get() * epsilon_rate.get()
+        result.0
     );
+
+    result
+}
+
+#[test]
+fn test() {
+    let input =
+        "00100\n11110\n10110\n10111\n10101\n01111\n00111\n11100\n10000\n11001\n00010\n01010";
+    let result = main(input.into());
+    assert_eq!(result.0, 198);
 }

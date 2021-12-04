@@ -1,4 +1,4 @@
-pub fn main(input: String) {
+pub fn main(input: String) -> (u64, u64) {
     let (mut x1, mut depth1) = (0u64, 0u64);
     let (mut x2, mut depth2, mut aim2) = (0u64, 0u64, 0u64);
 
@@ -25,6 +25,13 @@ pub fn main(input: String) {
         }
     }
 
-    println!("result task 1 = {}", x1 * depth1);
-    println!("result task 2 = {}", x2 * depth2);
+    (x1 * depth1, x2 * depth2)
+}
+
+#[test]
+fn test() {
+    let input = "forward 5\ndown 5\nforward 8\nup 3\ndown 8\nforward 2";
+    let result = main(input.into());
+    assert_eq!(result.0, 150);
+    assert_eq!(result.1, 900);
 }

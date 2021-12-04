@@ -17,11 +17,15 @@ fn main() {
     let filename = format!("input/input{}.txt", id);
     let input = fs::read_to_string(filename).unwrap();
 
-    match id {
+    let result = match id {
         1 => day1::main(input),
         2 => day2::main(input),
         3 => day3::main(input),
         4 => day4::main(input),
         _ => panic!("invalid id"),
-    }
+    };
+
+    println!();
+    println!("result task 1 = {}", result.0);
+    println!("result task 2 = {}", result.1);
 }
