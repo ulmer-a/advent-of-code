@@ -1,20 +1,4 @@
-struct BitPushNumber {
-    number: u32,
-}
-
-impl BitPushNumber {
-    fn new() -> BitPushNumber {
-        BitPushNumber { number: 0 }
-    }
-
-    fn push(&mut self, bit: u32) {
-        self.number = (self.number | bit) << 1;
-    }
-
-    fn get(&self) -> u32 {
-        self.number >> 1
-    }
-}
+use crate::bitpush::BitPushNumber;
 
 pub fn main(input: String) -> (u64, u64) {
     let line_length = input.lines().next().unwrap().len();
