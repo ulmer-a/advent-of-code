@@ -1,4 +1,4 @@
-use super::gridrange::GridRange;
+use crate::gridrange::GridRange;
 
 fn parse_pt(s: &str) -> (usize, usize) {
     let mut it = s.split(",");
