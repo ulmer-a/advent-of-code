@@ -102,3 +102,33 @@ fn no_diagonal_test() {
     let mut r = GridRange::new((8, 9), (6, 7), false);
     assert_eq!(r.next(), None);
 }
+
+#[test]
+fn simple_adjacent_test() {
+    let adj = GridRange::adjacents(3, 4, 8);
+    assert_eq!(
+        adj,
+        vec![
+            (2, 3),
+            (2, 4),
+            (2, 5),
+            (3, 3),
+            (3, 5),
+            (4, 3),
+            (4, 4),
+            (4, 5),
+        ]
+    );
+}
+
+#[test]
+fn boundary1_adjacent_test() {
+    let adj = GridRange::adjacents(0, 0, 8);
+    assert_eq!(adj, vec![(0, 1), (1, 0), (1, 1),]);
+}
+
+#[test]
+fn boundary2_adjacent_test() {
+    let adj = GridRange::adjacents(7, 7, 8);
+    assert_eq!(adj, vec![(6, 6), (6, 7), (7, 6),]);
+}
