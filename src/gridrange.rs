@@ -35,6 +35,23 @@ impl GridRange {
             -1
         }
     }
+
+    pub fn adjacents(x: usize, y: usize, size: usize) -> Vec<(usize, usize)> {
+        let (x, y) = (x as i32, y as i32);
+        let mut coords = vec![];
+        let bound_check = |x: i32| x >= 0 && x < size as i32;
+        for x_a in x - 1..x + 2 {
+            for y_a in y - 1..y + 2 {
+                if x_a == x && y_a == y {
+                    continue;
+                }
+                if bound_check(x_a) && bound_check(y_a) {
+                    coords.push((x_a as usize, y_a as usize))
+                }
+            }
+        }
+        coords
+    }
 }
 
 impl Iterator for GridRange {

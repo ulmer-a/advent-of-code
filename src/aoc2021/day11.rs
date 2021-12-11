@@ -1,3 +1,5 @@
+use crate::gridrange::GridRange;
+
 const GRID_SIZE: usize = 10;
 type Grid = [[u16; GRID_SIZE]; GRID_SIZE];
 
@@ -59,7 +61,7 @@ fn sim_step(grid: &mut Grid) -> u64 {
 
 fn flash(x: usize, y: usize, grid: &mut Grid) {
     grid[y][x] = 0xff; // mark this octopus flashed
-    for (x_a, y_a) in adjacents(x, y) {
+    for (x_a, y_a) in GridRange::adjacents(x, y, GRID_SIZE) {
         if grid[y_a][x_a] >= 10 {
             continue;
         }
@@ -69,23 +71,6 @@ fn flash(x: usize, y: usize, grid: &mut Grid) {
             flash(x_a, y_a, grid);
         }
     }
-}
-
-fn adjacents(x: usize, y: usize) -> Vec<(usize, usize)> {
-    let (x, y) = (x as i32, y as i32);
-    let mut coords = vec![];
-    let bound_check = |x: i32| x >= 0 && x < GRID_SIZE as i32;
-    for x_a in x - 1..x + 2 {
-        for y_a in y - 1..y + 2 {
-            if x_a == x && y_a == y {
-                continue;
-            }
-            if bound_check(x_a) && bound_check(y_a) {
-                coords.push((x_a as usize, y_a as usize))
-            }
-        }
-    }
-    coords
 }
 
 fn fill_grid(input: String, grid: &mut Grid) {
