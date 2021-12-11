@@ -1,5 +1,6 @@
 mod day1;
 mod day10;
+mod day11;
 mod day2;
 mod day3;
 mod day4;
@@ -21,6 +22,7 @@ pub fn run(id: usize, input: String) -> Option<(u64, u64)> {
         8 => day8::main(input),
         9 => day9::main(input),
         10 => day10::main(input),
+        11 => day11::main(input),
         _ => return None,
     })
 }
