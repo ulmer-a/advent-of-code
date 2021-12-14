@@ -1,58 +1,78 @@
 use std::collections::HashMap;
 
 pub fn main(input: String) -> (u64, u64) {
-    let mut formula = String::from(input.split("\n\n").next().unwrap());
-    let rules = parse_rules(input);
+    let template = input.split("\n\n").next().unwrap();
+    let rules = parse_rules(&input);
 
-    for _ in 0..10 {
-        formula = iter_polymer(formula, &rules);
-    }
-
-    (measure(&formula), 0)
+    (
+        polymer_insert(template, &rules, 10),
+        polymer_insert(template, &rules, 40),
+    )
 }
 
-fn measure(s: &String) -> u64 {
-    let mut counts = [0; 26];
-    for c in s.bytes() {
-        if c >= 'A' as u8 && c <= 'Z' as u8 {
-            let g = &mut counts[c as usize - 'A' as usize];
-            *g += 1;
-        }
+fn polymer_insert(template: &str, rules: &HashMap<(char, char), char>, depth: usize) -> u64 {
+    let mut dyn_lookup_map = HashMap::new();
+    for (key, _) in rules.iter() {
+        dyn_lookup_map.insert(key, [0u64; 26]);
     }
-    let max_value = counts.iter().max().unwrap();
-    let min_value = counts.iter().filter(|n| *n > &0).min().unwrap();
-    (max_value - min_value) as u64
-}
 
-fn iter_polymer(formula: String, rules: &HashMap<String, char>) -> String {
-    let mut next_formula = String::new();
-    let mut prev_c = formula.chars().next().unwrap();
-    for c in formula.chars().skip(1) {
-        next_formula.push(prev_c);
-        if let Some(plug_c) = rules.get(&format!("{}{}", prev_c, c)) {
-            next_formula.push(*plug_c);
+    for _ in 0..depth {
+        // for each level of recursion, build a map of letter
+        // counts for each possible map key.
+        let mut next_map = HashMap::new();
+        for (rule, next_c) in rules.iter() {
+            let letter_counts = sum_letter_count(
+                *next_c,
+                dyn_lookup_map.get(&(rule.0, *next_c)).unwrap(),
+                dyn_lookup_map.get(&(*next_c, rule.1)).unwrap(),
+            );
+            next_map.insert(rule, letter_counts);
         }
+        dyn_lookup_map = next_map;
+    }
+
+    // finally, apply the results in the top level and get the solution
+    let mut letter_counts = [0u64; 26];
+    let mut prev_c = template.chars().next().unwrap();
+    for c in template.chars().skip(1) {
+        let path_counts = dyn_lookup_map.get(&(prev_c, c)).unwrap();
+        letter_counts = sum_letter_count(prev_c, &letter_counts, path_counts);
         prev_c = c;
     }
-    next_formula.push(prev_c);
-    next_formula
+    letter_counts[prev_c as usize - 'A' as usize] += 1;
+
+    // extract most and least common character counts
+    let least_common = letter_counts.iter().filter(|c| *c > &0).min().unwrap();
+    let most_common = letter_counts.iter().max().unwrap();
+    most_common - least_common
 }
 
-fn parse_rules(source: String) -> HashMap<String, char> {
+/// element-wise addition of l1, l2 as well as addition of char c
+fn sum_letter_count(c: char, l1: &[u64; 26], l2: &[u64; 26]) -> [u64; 26] {
+    let mut letter_counts = *l1;
+    for i in 0..26 {
+        letter_counts[i] += l2[i];
+    }
+    letter_counts[c as usize - 'A' as usize] += 1;
+    letter_counts
+}
+
+fn parse_rules(source: &String) -> HashMap<(char, char), char> {
     let mut rules = HashMap::new();
     for rule in source.lines().skip(2) {
         let mut it = rule.split(" -> ");
+        let mut key_chars = it.next().unwrap().chars();
         rules.insert(
-            it.next().unwrap().into(),
+            (key_chars.next().unwrap(), key_chars.next().unwrap()),
             it.next().unwrap().chars().next().unwrap(),
         );
     }
     rules
 }
 
-#[cfg(test)]
-mod tests {
-    const INPUT: &str = r#"NNCB
+#[test]
+fn test_main() {
+    let input = r#"NNCB
 
 CH -> B
 HH -> N
@@ -70,28 +90,7 @@ BB -> N
 BC -> B
 CC -> N
 CN -> C"#;
-
-    #[test]
-    fn iter_test() {
-        let mut formula = String::from(INPUT.split("\n\n").next().unwrap());
-        let rules = super::parse_rules(INPUT.into());
-
-        formula = super::iter_polymer(formula, &rules);
-        assert_eq!(formula, "NCNBCHB");
-
-        formula = super::iter_polymer(formula, &rules);
-        assert_eq!(formula, "NBCCNBBBCBHCB");
-
-        formula = super::iter_polymer(formula, &rules);
-        assert_eq!(formula, "NBBBCNCCNBBNBNBBCHBHHBCHB");
-
-        formula = super::iter_polymer(formula, &rules);
-        assert_eq!(formula, "NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB");
-    }
-
-    #[test]
-    fn test_main() {
-        let r = super::main(INPUT.into());
-        assert_eq!(r.0, 1588);
-    }
+    let r = main(input.into());
+    assert_eq!(r.0, 1588);
+    assert_eq!(r.1, 2188189693529);
 }
