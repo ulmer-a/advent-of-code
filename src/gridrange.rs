@@ -6,7 +6,11 @@ pub struct GridRange {
 }
 
 impl GridRange {
-    pub fn new(p1: (usize, usize), p2: (usize, usize), allow_diagonal: bool) -> GridRange {
+    pub fn new(
+        p1: (usize, usize),
+        p2: (usize, usize),
+        allow_diagonal: bool,
+    ) -> GridRange {
         let mut grid_range = GridRange {
             p: (p1.0 as i64, p1.1 as i64),
             count_left: Self::step_count(p1, p2),

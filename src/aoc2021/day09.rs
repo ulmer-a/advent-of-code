@@ -43,7 +43,11 @@ pub fn main(input: String) -> (u64, u64) {
     (max_sum, basin_size_product)
 }
 
-fn visit_basin(p: (usize, usize), grid: &Vec<Vec<u8>>, visited: &mut Vec<(usize, usize)>) {
+fn visit_basin(
+    p: (usize, usize),
+    grid: &Vec<Vec<u8>>,
+    visited: &mut Vec<(usize, usize)>,
+) {
     if grid[p.1][p.0] == 9 || visited.contains(&p) {
         return;
     }

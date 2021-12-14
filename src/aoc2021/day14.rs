@@ -10,7 +10,11 @@ pub fn main(input: String) -> (u64, u64) {
     )
 }
 
-fn polymer_insert(template: &str, rules: &HashMap<(char, char), char>, depth: usize) -> u64 {
+fn polymer_insert(
+    template: &str,
+    rules: &HashMap<(char, char), char>,
+    depth: usize,
+) -> u64 {
     let mut dyn_lookup_map = HashMap::new();
     for (key, _) in rules.iter() {
         dyn_lookup_map.insert(key, [0u64; 26]);

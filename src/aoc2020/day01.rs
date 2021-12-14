@@ -6,7 +6,8 @@ fn find_n_summing(sum: u64, n: u8, iter: Iter<u64>, interm: u64) -> Option<u64> 
     let mut iter = iter;
     while let Some(n1) = iter.next() {
         if n - 1 > 0 {
-            if let Some(n2) = find_n_summing(sum, n - 1, iter.clone(), *n1 + interm) {
+            if let Some(n2) = find_n_summing(sum, n - 1, iter.clone(), *n1 + interm)
+            {
                 return Some(*n1 * n2);
             }
         } else if *n1 + interm == sum {
@@ -17,7 +18,8 @@ fn find_n_summing(sum: u64, n: u8, iter: Iter<u64>, interm: u64) -> Option<u64> 
 }
 
 pub fn main(input: String) -> (u64, u64) {
-    let numbers: Vec<u64> = input.lines().map(|x| x.parse::<u64>().unwrap()).collect();
+    let numbers: Vec<u64> =
+        input.lines().map(|x| x.parse::<u64>().unwrap()).collect();
 
     (
         find_n_summing(2020, 2, numbers.iter(), 0).unwrap(),

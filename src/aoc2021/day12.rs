@@ -71,7 +71,9 @@ fn visit_cave(
     if let Some(adj_list) = adj.get(current) {
         for next_cave in adj_list {
             let mut mode = mode;
-            if is_small_cave(next_cave) && has_been_visited(visited, next_cave, &mut mode) {
+            if is_small_cave(next_cave)
+                && has_been_visited(visited, next_cave, &mut mode)
+            {
                 continue;
             }
 
