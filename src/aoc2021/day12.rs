@@ -22,9 +22,7 @@ fn gen_adjacency_map(input: String) -> HashMap<String, Vec<String>> {
     };
 
     for line in input.lines() {
-        let mut line = line.split("-");
-        let s1 = line.next().unwrap();
-        let s2 = line.next().unwrap();
+        let (s1, s2) = line.split_once("-").unwrap();
 
         adj_insert(s1, s2);
         adj_insert(s2, s1);

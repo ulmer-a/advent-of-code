@@ -64,11 +64,11 @@ fn sum_letter_count(c: char, l1: &[u64; 26], l2: &[u64; 26]) -> [u64; 26] {
 fn parse_rules(source: &String) -> HashMap<(char, char), char> {
     let mut rules = HashMap::new();
     for rule in source.lines().skip(2) {
-        let mut it = rule.split(" -> ");
-        let mut key_chars = it.next().unwrap().chars();
+        let (key, value) = rule.split_once(" -> ").unwrap();
+        let mut key_chars = key.chars();
         rules.insert(
             (key_chars.next().unwrap(), key_chars.next().unwrap()),
-            it.next().unwrap().chars().next().unwrap(),
+            value.chars().next().unwrap(),
         );
     }
     rules

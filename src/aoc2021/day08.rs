@@ -78,9 +78,7 @@ pub fn main(input: String) -> (u64, u64) {
     let mut output_sum = 0;
 
     for line in input.lines() {
-        let mut line = line.split(" | ");
-        let train_words = line.next().unwrap();
-        let out_words = line.next().unwrap();
+        let (train_words, out_words) = line.split_once(" | ").unwrap();
 
         let mut learner = SevenSegmentLearner::new();
         for train_word in train_words.split_whitespace() {

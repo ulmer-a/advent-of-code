@@ -1,11 +1,11 @@
 use itertools::Itertools;
 
 pub fn main(input: String) -> (u64, u64) {
-    let mut parts = input.split("\n\n");
-    let mut points = extract_points(parts.next().unwrap());
+    let (points, folds) = input.split_once("\n\n").unwrap();
+    let mut points = extract_points(points);
 
     let mut solution_task1 = None;
-    for line in parts.next().unwrap().lines() {
+    for line in folds.lines() {
         let fold_at = line
             .split("=")
             .skip(1)
@@ -59,11 +59,8 @@ fn extract_points(source: &str) -> Vec<(u64, u64)> {
     source
         .lines()
         .map(|line| {
-            let mut parts = line.split(",");
-            (
-                parts.next().unwrap().parse::<u64>().unwrap(),
-                parts.next().unwrap().parse::<u64>().unwrap(),
-            )
+            let p = line.split_once(",").unwrap();
+            (p.0.parse::<u64>().unwrap(), p.1.parse::<u64>().unwrap())
         })
         .collect()
 }

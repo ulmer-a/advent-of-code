@@ -1,11 +1,9 @@
 use crate::gridrange::GridRange;
 
 fn parse_pt(s: &str) -> (usize, usize) {
-    let mut it = s.split(",");
-    (
-        it.next().unwrap().parse::<usize>().unwrap(),
-        it.next().unwrap().parse::<usize>().unwrap(),
-    )
+    s.split_once(",")
+        .map(|n| (n.0.parse::<usize>().unwrap(), n.1.parse::<usize>().unwrap()))
+        .unwrap()
 }
 
 fn draw_grid(input: &str, allow_diagonal: bool) -> u64 {
@@ -14,9 +12,8 @@ fn draw_grid(input: &str, allow_diagonal: bool) -> u64 {
 
     let mut solution_count = 0;
     for line in input.lines() {
-        let mut pts = line.split(" -> ");
-        let p1 = parse_pt(pts.next().unwrap());
-        let p2 = parse_pt(pts.next().unwrap());
+        let s = line.split_once(" -> ").unwrap();
+        let (p1, p2) = (parse_pt(s.0), parse_pt(s.1));
 
         for p in GridRange::new(p1, p2, allow_diagonal) {
             let grid_value = &mut grid[p.1][p.0];

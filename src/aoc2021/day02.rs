@@ -3,9 +3,8 @@ pub fn main(input: String) -> (u64, u64) {
     let (mut x2, mut depth2, mut aim2) = (0u64, 0u64, 0u64);
 
     for line in input.lines() {
-        let mut line_iter = line.split(" ").into_iter();
-        let command = line_iter.next().unwrap();
-        let value = line_iter.next().unwrap().parse::<u64>().unwrap();
+        let (command, b) = line.split_once(" ").unwrap();
+        let value = b.parse::<u64>().unwrap();
 
         match command {
             "up" => depth1 -= value,
