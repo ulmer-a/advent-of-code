@@ -12,6 +12,7 @@ mod day11;
 mod day12;
 mod day13;
 mod day14;
+mod day15;
 
 pub fn run(id: usize, input: String) -> Option<(u64, u64)> {
     Some(match id {
@@ -29,6 +30,7 @@ pub fn run(id: usize, input: String) -> Option<(u64, u64)> {
         12 => day12::main(input),
         13 => day13::main(input),
         14 => day14::main(input),
+        15 => day15::main(input),
         _ => return None,
     })
 }

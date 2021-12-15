@@ -56,6 +56,23 @@ impl GridRange {
         }
         coords
     }
+
+    pub fn sq_adjacents(x: usize, y: usize, size: usize) -> Vec<(usize, usize)> {
+        let mut adj = vec![];
+        if x > 0 {
+            adj.push((x - 1, y));
+        }
+        if y > 0 {
+            adj.push((x, y - 1));
+        }
+        if x + 1 < size {
+            adj.push((x + 1, y));
+        }
+        if y + 1 < size {
+            adj.push((x, y + 1));
+        }
+        adj
+    }
 }
 
 impl Iterator for GridRange {
