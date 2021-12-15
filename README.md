@@ -16,3 +16,6 @@ Run the exercises using cargo:
 
 Each exercise program and the utility code contain a number of
 tests to verify correctness. Run them using `cargo test`.
+
+## Highlights
+* Day 15/2021 implements Dijkstra's shortest path algorithm
