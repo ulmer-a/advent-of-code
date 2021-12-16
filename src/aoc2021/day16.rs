@@ -1,13 +1,19 @@
-struct HexLex {
-    data: Vec<u8>,
-}
-
 enum Packet {
     LiteralValue(u64),
     Operator(u8, Vec<Packet>),
 }
 
-impl HexLex {
+struct HexPacketParser {
+    data: Vec<u8>,
+}
+
+pub fn main(input: String) -> (u64, u64) {
+    let mut lexer = HexPacketParser::new(&input);
+    let (version_sum, packet) = lexer.parse_all_packets();
+    (version_sum, eval_packet(&packet))
+}
+
+impl HexPacketParser {
     fn new(source: &str) -> Self {
         let mut bits: Vec<u8> = Vec::with_capacity(source.len() * 4);
         for hex_digit in source.chars().rev() {
@@ -17,7 +23,7 @@ impl HexLex {
             bits.push(Self::nth_bit_set(binary_rep, 2));
             bits.push(Self::nth_bit_set(binary_rep, 3));
         }
-        HexLex { data: bits }
+        HexPacketParser { data: bits }
     }
 
     fn nth_bit_set(number: u8, n: usize) -> u8 {
@@ -50,16 +56,15 @@ impl HexLex {
             number = (number << 4) | self.number_from_n_bits(4)?;
 
             if stop_bit == 0 {
-                //self.discard_padding();
                 break Some(number);
             }
         }
     }
 
-    fn parse_all_packets(&mut self) -> (u64, Vec<Packet>) {
+    fn parse_all_packets(&mut self) -> (u64, Packet) {
         let mut version_sum = 0;
-        let packets = self.parse_packets(&mut version_sum, self.data.len());
-        (version_sum, packets.unwrap())
+        let packet = self.parse_packet(&mut version_sum);
+        (version_sum, packet.unwrap())
     }
 
     fn parse_packets(
@@ -106,43 +111,77 @@ impl HexLex {
     }
 }
 
-pub fn main(input: String) -> (u64, u64) {
-    let mut lexer = HexLex::new(&input);
-    let (version_sum, _) = lexer.parse_all_packets();
-    (version_sum, 0)
+fn eval_packet(packet: &Packet) -> u64 {
+    match packet {
+        Packet::LiteralValue(value) => *value,
+        Packet::Operator(op, operands) => {
+            let operands: Vec<u64> =
+                operands.iter().map(|p| eval_packet(p)).collect();
+            match op {
+                0 => operands.iter().sum(),
+                1 => operands.iter().product(),
+                2 => *operands.iter().min().unwrap(),
+                3 => *operands.iter().max().unwrap(),
+                5 => {
+                    if operands[0] > operands[1] {
+                        1
+                    } else {
+                        0
+                    }
+                }
+                6 => {
+                    if operands[0] < operands[1] {
+                        1
+                    } else {
+                        0
+                    }
+                }
+                7 => {
+                    if operands[0] == operands[1] {
+                        1
+                    } else {
+                        0
+                    }
+                }
+                _ => 0,
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+fn evaluate(src: &str) -> u64 {
+    main(src.into()).1
+}
+
+#[cfg(test)]
+fn sumup_versions(src: &str) -> u64 {
+    main(src.into()).0
 }
 
 #[test]
-fn test1() {
-    let input = r#"8A004A801A8002F478"#;
-    let r = main(input.into());
-    assert_eq!(r.0, 16);
+fn test_version_count() {
+    assert_eq!(sumup_versions("8A004A801A8002F478"), 16);
+    assert_eq!(sumup_versions("620080001611562C8802118E34"), 12);
+    assert_eq!(sumup_versions("C0015000016115A2E0802F182340"), 23);
+    assert_eq!(sumup_versions("A0016C880162017C3686B18A3D4780"), 31);
 }
 
 #[test]
-fn test2() {
-    let input = r#"620080001611562C8802118E34"#;
-    let r = main(input.into());
-    assert_eq!(r.0, 12);
-}
-
-#[test]
-fn test3() {
-    let input = r#"C0015000016115A2E0802F182340"#;
-    let r = main(input.into());
-    assert_eq!(r.0, 23);
-}
-
-#[test]
-fn test4() {
-    let input = r#"A0016C880162017C3686B18A3D4780"#;
-    let r = main(input.into());
-    assert_eq!(r.0, 31);
+fn test_evaluate() {
+    assert_eq!(evaluate("C200B40A82"), 3);
+    assert_eq!(evaluate("04005AC33890"), 54);
+    assert_eq!(evaluate("880086C3E88112"), 7);
+    assert_eq!(evaluate("CE00C43D881120"), 9);
+    assert_eq!(evaluate("D8005AC2A8F0"), 1);
+    assert_eq!(evaluate("F600BC2D8F"), 0);
+    assert_eq!(evaluate("9C005AC2F8F0"), 0);
+    assert_eq!(evaluate("9C0141080250320F1802104A08"), 1);
 }
 
 #[test]
 fn test_hex_lex() {
-    let mut lexer = HexLex::new("DEADBEEF");
+    let mut lexer = HexPacketParser::new("DEADBEEF");
     assert_eq!(lexer.number_from_n_bits(3).unwrap(), 6);
     assert_eq!(lexer.number_from_n_bits(3).unwrap(), 7);
 }
