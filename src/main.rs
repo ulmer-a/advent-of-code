@@ -60,6 +60,7 @@ fn run(year: usize, day: usize, input: String) -> Option<(u64, u64)> {
     match year {
         2020 => aoc2020::run(day, input),
         2021 => aoc2021::run(day, input),
+        2022 => aoc2022::run(day, input),
         _ => None,
     }
 }
