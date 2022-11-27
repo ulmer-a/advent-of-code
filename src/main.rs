@@ -1,8 +1,9 @@
 use chrono::{self, Datelike};
-use std::{env, fs};
+use std::{env, fs, process::exit};
 
 mod aoc2020;
 mod aoc2021;
+mod aoc2022;
 mod bitpush;
 mod gridrange;
 
@@ -14,6 +15,12 @@ fn main() {
     let id = if let Some(arg) = args.next() {
         arg.parse::<usize>().unwrap()
     } else {
+        if now.month() != 12 || now.day() > 25 {
+            print!("error: as today is not an advent date, ");
+            println!("you'll have to specify a date to run:");
+            println!("use:   cargo run -- [day] [year]");
+            exit(1);
+        }
         now.day() as usize // default is current day
     };
 
@@ -24,11 +31,18 @@ fn main() {
         now.year() as usize // default is current year
     };
 
-    let filename = format!("input/{}/input{}.txt", year, id);
-    let input = fs::read_to_string(filename).unwrap();
-
     println!("executing task from day {}.12.{}", id, year);
     println!();
+
+    let filename = format!("input/{}/input{}.txt", year, id);
+    let input = match fs::read_to_string(&filename) {
+        Ok(input) => input,
+        Err(error) => {
+            println!("{}: {}", filename, error);
+            println!("maybe you forgot to provide an input file?");
+            exit(1);
+        }
+    };
 
     if let Some(result) = run(year, id, input) {
         println!("result task 1 = {}", result.0);
