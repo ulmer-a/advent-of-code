@@ -1,13 +1,23 @@
 use pair::Pair;
 
 pub fn main(input: String) -> (u64, u64) {
-    let m1 = input
+    let magnitude = input
         .lines()
         .map(|l| Pair::new(l))
         .fold(Pair::neutral(), |p1, p2| p1 + p2)
         .magnitude();
 
-    (m1, 0)
+    let mut max_magnitude = 0;
+    for a in input.lines().map(|l| Pair::new(l)) {
+        for b in input.lines().map(|l| Pair::new(l)) {
+            let mag = (a.clone() + b).magnitude();
+            if mag > max_magnitude {
+                max_magnitude = mag;
+            }
+        }
+    }
+
+    (magnitude, max_magnitude)
 }
 
 mod pair {
@@ -34,7 +44,7 @@ mod pair {
         Error,
     }
 
-    #[derive(PartialEq, Debug)]
+    #[derive(PartialEq, Debug, Clone)]
     pub struct Pair(String);
 
     impl Pair {
@@ -211,7 +221,7 @@ fn test() {
 
     let r = main(input.into());
     assert_eq!(r.0, 4140);
-    //assert_eq!(r.1, 0);
+    assert_eq!(r.1, 3993);
 }
 
 #[test]
