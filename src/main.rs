@@ -7,6 +7,9 @@ mod aoc2022;
 mod bitpush;
 mod gridrange;
 
+#[cfg(test)]
+mod tests;
+
 fn main() {
     let now = chrono::offset::Local::now();
     let mut args = env::args().skip(1);
