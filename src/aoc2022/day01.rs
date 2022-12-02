@@ -1,10 +1,14 @@
-pub fn main(_input: String) -> (u64, u64) {
-    todo!()
-}
+use itertools::Itertools;
 
-#[test]
-fn test() {
-    // let input = "199\n200\n208\n210\n200\n207\n240\n269\n260\n263";
-    // let result = main(input.into());
-    // assert_eq!(result.1, 5);
+pub fn main(input: String) -> (u64, u64) {
+    let elf_calories: Vec<u64> = input
+        .split("\n\n")
+        .map(|block| block.lines().map(|line| line.parse::<u64>().unwrap()).sum())
+        .sorted()
+        .collect();
+
+    let max_elf_calories = elf_calories.last().unwrap();
+    let max_3_elf_calories = elf_calories.iter().rev().take(3).sum();
+
+    (*max_elf_calories, max_3_elf_calories)
 }
