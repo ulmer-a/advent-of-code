@@ -1,5 +1,7 @@
 use chrono::{self, Datelike};
-use std::{env, fs, process::exit};
+use serde::Deserialize;
+use std::{fs, process::exit};
+use structopt::StructOpt;
 
 mod aoc2020;
 mod aoc2021;
@@ -10,34 +12,44 @@ mod gridrange;
 #[cfg(test)]
 mod tests;
 
+#[derive(StructOpt, Debug)]
+#[structopt(name = "basic")]
+struct Opt {
+    day: Option<usize>,
+
+    year: Option<usize>,
+
+    #[structopt(long)]
+    answer: bool,
+}
+
+#[derive(Deserialize)]
+struct TestCase {
+    year: usize,
+    day: usize,
+    task1: u64,
+    task2: Option<u64>,
+}
+
 fn main() {
+    let opt = Opt::from_args();
     let now = chrono::offset::Local::now();
-    let mut args = env::args().skip(1);
 
-    // parse day number to be executed
-    let id = if let Some(arg) = args.next() {
-        arg.parse::<usize>().unwrap()
-    } else {
-        if now.month() != 12 || now.day() > 25 {
-            print!("error: as today is not an advent date, ");
-            println!("you'll have to specify a date to run:");
-            println!("use:   cargo run -- [day] [year]");
-            exit(1);
-        }
-        now.day() as usize // default is current day
+    let year = match opt.year {
+        None => now.year() as usize,
+        Some(year) => year,
     };
 
-    // parse year to be executed from
-    let year = if let Some(arg) = args.next() {
-        arg.parse::<usize>().unwrap()
-    } else {
-        now.year() as usize // default is current year
+    let day = match opt.day {
+        None => now.day() as usize,
+        Some(day) => day,
     };
 
-    println!("executing task from day {}.12.{}", id, year);
-    println!();
+    let filename = match opt.answer {
+        true => format!("input/{}/input{}.txt", year, day),
+        false => format!("input/tests/{}/input{}.txt", year, day),
+    };
 
-    let filename = format!("input/{}/input{}.txt", year, id);
     let input = match fs::read_to_string(&filename) {
         Ok(input) => input,
         Err(error) => {
@@ -47,15 +59,25 @@ fn main() {
         }
     };
 
-    if let Some(result) = run(year, id, input) {
-        println!("result task 1 = {}", result.0);
-        println!("result task 2 = {}", result.1);
+    println!("executing task from day {}.12.{}", day, year);
+    println!();
+
+    let result = run(year, day, input).unwrap();
+
+    if opt.answer {
+        println!("task 1: {}", result.0);
+        println!("task 1: {}", result.1);
     } else {
-        println!(
-            "day {} in year '{} doesn't exist or hasn't been solved",
-            id,
-            year % 100
-        );
+        let config = fs::read_to_string("input/tests/tests.yaml").unwrap();
+        let testcases: Vec<TestCase> = serde_yaml::from_str(&config).unwrap();
+        for tc in testcases {
+            if tc.day == day && tc.year == year {
+                println!("task1: {}, expected {}", result.0, tc.task1);
+                if let Some(t2) = tc.task2 {
+                    println!("task2: {}, expected {}", result.1, t2);
+                }
+            }
+        }
     }
 }
 

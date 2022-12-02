@@ -8,22 +8,17 @@ My solutions for Advent of Code 2021 and 2022
 
 Run the exercises using cargo:
 
-* `cargo run` run program for the current day (only makes sense in december)
-* `cargo run <day>` run program for the specified day in the current year
-* `cargo run <day> <year>` run program for the specified date
-* `cargo test day_<day>_<year>` run test for the specified date
+* `cargo run` run example for the today's date (only makes sense in advent)
+* `cargo run -- <day>` run example for the specified day in the current year
+* `cargo run -- <day> <year>` run example for the specified day in the current year
+
+The `--answer` option that must come last will compute the actual
+result for the specified date (not just the example).
 
 ## Tests
 
-Each exercise program and the utility code contain a number of
+Most exercise programs and utility routines contain a number of
 unit tests to verify correctness. Run them using `cargo test`.
-
-Also most days provide integration tests that use the example
-that is usually given in the task description. Invoke using:
-
-```
-cargo test day_<day>_<year>
-```
 
 ## Highlights
 * Day 15/2021 implements Dijkstra's shortest path algorithm
