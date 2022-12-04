@@ -1,14 +1,21 @@
 use std::ops::RangeInclusive;
 
 pub fn main(input: String) -> (u64, u64) {
-    let pairs = input
+    let pairs_fully_contained = input
         .lines()
         .map(|line| into_ranges(line))
         .map(|(r1, r2)| check_contains(r1, r2))
         .map(|b| if b { 1 } else { 0 })
         .sum();
 
-    (pairs, 0)
+    let pairs_overlapping = input
+        .lines()
+        .map(|line| into_ranges(line))
+        .map(|(r1, r2)| check_overlaps(r1, r2))
+        .map(|b| if b { 1 } else { 0 })
+        .sum();
+
+    (pairs_fully_contained, pairs_overlapping)
 }
 
 fn into_ranges(line: &str) -> (RangeInclusive<u64>, RangeInclusive<u64>) {
@@ -28,6 +35,18 @@ fn check_contains(r1: RangeInclusive<u64>, r2: RangeInclusive<u64>) -> bool {
         true
     } else {
         if r2.contains(r1.start()) && r2.contains(r1.end()) {
+            true
+        } else {
+            false
+        }
+    }
+}
+
+fn check_overlaps(r1: RangeInclusive<u64>, r2: RangeInclusive<u64>) -> bool {
+    if r1.contains(r2.start()) || r1.contains(r2.end()) {
+        true
+    } else {
+        if r2.contains(r1.start()) || r2.contains(r1.end()) {
             true
         } else {
             false
