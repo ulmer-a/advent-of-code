@@ -9,9 +9,6 @@ mod aoc2022;
 mod bitpush;
 mod gridrange;
 
-#[cfg(test)]
-mod tests;
-
 #[derive(StructOpt, Debug)]
 #[structopt(name = "basic")]
 struct Opt {
