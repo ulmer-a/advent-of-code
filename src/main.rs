@@ -3,6 +3,7 @@ use serde::Deserialize;
 use std::{fs, process::exit};
 use structopt::StructOpt;
 
+mod aoc2019;
 mod aoc2020;
 mod aoc2021;
 mod aoc2022;
@@ -80,6 +81,7 @@ fn main() {
 
 fn run(year: usize, day: usize, input: String) -> Option<(u64, u64)> {
     match year {
+        2019 => aoc2019::run(day, input),
         2020 => aoc2020::run(day, input),
         2021 => aoc2021::run(day, input),
         2022 => aoc2022::run(day, input),
