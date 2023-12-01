@@ -7,6 +7,8 @@ mod aoc2019;
 mod aoc2020;
 mod aoc2021;
 mod aoc2022;
+mod aoc2023;
+
 mod bitpush;
 mod gridrange;
 
@@ -85,6 +87,7 @@ fn run(year: usize, day: usize, input: String) -> Option<(u64, u64)> {
         2020 => aoc2020::run(day, input),
         2021 => aoc2021::run(day, input),
         2022 => aoc2022::run(day, input),
+        2023 => aoc2023::run(day, input),
         _ => None,
     }
 }
