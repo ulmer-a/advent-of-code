@@ -19,7 +19,7 @@
                     "kind": "bin"
                 }
             },
-            "args": [ "18", "2021" ],
+            "args": [ ],
             "cwd": "${workspaceFolder}"
         },
         {
